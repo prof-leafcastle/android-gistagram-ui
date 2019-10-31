@@ -75,7 +75,6 @@ public class GistaActivity extends AppCompatActivity implements ImageUploadListe
                         if(imageUploadListener != null) {
                             imageUploadListener.uploadSucceeded();
                         }
-                        Toast.makeText(getApplication(), "Image Uploaded Successfully", Toast.LENGTH_SHORT).show();
                     }
                 }, new Response.ErrorListener() {
             @Override
