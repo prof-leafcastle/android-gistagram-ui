@@ -26,7 +26,7 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 
-public class GistaActivity extends AppCompatActivity {
+public class GistaActivity extends AppCompatActivity implements ImageUploadListener {
 
     public final static int PERMISSION_CAMERA_REQUEST = 8201;
     public final static int REQUEST_CODE_TAKE_PICTURE = 8101;
@@ -35,11 +35,12 @@ public class GistaActivity extends AppCompatActivity {
     private RequestQueue queue;
     private String URL;
     private String BUCKET;
+    private ImageUploadListener imageUploadListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main);
+        setImageUploadListener(this);
     }
 
     protected void sendBitmap(String username, Bitmap bitmap){
@@ -71,11 +72,18 @@ public class GistaActivity extends AppCompatActivity {
                         Log.e(TAG, jsonObject.toString());
                         queue.getCache().clear();
                         Toast.makeText(getApplication(), "Image Uploaded Successfully", Toast.LENGTH_SHORT).show();
+                        if(imageUploadListener != null) {
+                            imageUploadListener.uploadSucceeded();
+                        }
+                        Toast.makeText(getApplication(), "Image Uploaded Successfully", Toast.LENGTH_SHORT).show();
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
                 Log.e("Volley error", volleyError.toString());
+                if(imageUploadListener != null) {
+                    imageUploadListener.uploadFailed();
+                }
             }
         });
         queue.add(jsonObjectRequest);
@@ -130,5 +138,17 @@ public class GistaActivity extends AppCompatActivity {
     }
 
     protected void onPictureTaken(Bitmap pic){
+    }
+
+    public void setImageUploadListener(ImageUploadListener imageUploadListener) {
+        this.imageUploadListener = imageUploadListener;
+    }
+
+    @Override
+    public void uploadFailed() {
+    }
+
+    @Override
+    public void uploadSucceeded() {
     }
 }
